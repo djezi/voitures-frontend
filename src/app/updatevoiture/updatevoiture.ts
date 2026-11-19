@@ -10,12 +10,12 @@ import { Categorie } from '../model/categorie.model';
   imports: [CommonModule, FormsModule],
   selector: 'app-update-voiture',
   templateUrl: './updatevoiture.html'
-  
 })
 export class UpdateVoiture implements OnInit {
   currentVoiture = new Voiture();
-  categories! : Categorie[]; 
-  updatedCatId! : number; 
+  categories!: Categorie[];
+  updatedCatId!: number;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -23,16 +23,22 @@ export class UpdateVoiture implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.categories = this.voitureService.listeCategorie(); 
+    this.categories = this.voitureService.listeCategorie();
     const id = this.activatedRoute.snapshot.params['id'];
-    this.currentVoiture = this.voitureService.consulterVoiture(id);
-    if (this.currentVoiture && this.currentVoiture.categorie) {
+    const found = this.voitureService.consulterVoiture(id);
+    if (!found) {
+      this.router.navigate(['/voitures']);
+      return;
+    }
+    // work on a copy so nothing changes until "Modifier" is clicked
+    this.currentVoiture = { ...found };
+    if (this.currentVoiture.categorie) {
       this.updatedCatId = this.currentVoiture.categorie.idCat;
     }
   }
 
   onUpdateVoiture() {
-    this.currentVoiture.categorie=this.voitureService.consulterCategorie(this.updatedCatId);
+    this.currentVoiture.categorie = this.voitureService.consulterCategorie(this.updatedCatId);
     this.voitureService.updateVoiture(this.currentVoiture);
     this.router.navigate(['/voitures']);
   }

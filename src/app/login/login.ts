@@ -12,17 +12,14 @@ import { Router } from '@angular/router';
 })
 export class Login implements OnInit {
   user = new User();
-  constructor(private authService : Auth, 
-             private  router: Router) { } 
-  ngOnInit(){
+  constructor(private authService: Auth, private router: Router) { }
+  ngOnInit() {
   }
-   onLoggedin(){ 
-  console.log(this.user); 
-  let isValidUser: Boolean = this.authService.SignIn(this.user); 
- 
-  if (isValidUser) 
-     this.router.navigate(['/']); 
-  else 
-     alert('Login ou mot de passe incorrecte!'); 
+  onLoggedin() {
+    let isValidUser: boolean = this.authService.SignIn(this.user);
+    if (isValidUser)
+      this.router.navigate(['/']);
+    else
+      alert('Login ou mot de passe incorrecte!');
   }
 }
