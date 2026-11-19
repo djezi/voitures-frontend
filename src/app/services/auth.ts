@@ -10,7 +10,7 @@ export class Auth {
     { username: 'nadhem', password: '123', roles: ['USER'] }
   ];
 
-  // signals: the navbar and the pages update by themselves after login/logout
+
   public loggedUser = signal<string>('');
   public isloggedIn = signal<boolean>(false);
   public roles = signal<string[]>([]);
@@ -19,7 +19,6 @@ export class Auth {
     this.loadFromStorage();
   }
 
-  // restore the session after a page refresh
   private loadFromStorage() {
     try {
       const user = localStorage.getItem('loggedUser');

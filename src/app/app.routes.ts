@@ -6,6 +6,7 @@ import { RechercheParCategorie } from './recherche-par-categorie/recherche-par-c
 import { RechercheParNom } from './recherche-par-nom/recherche-par-nom';
 import { Login } from './login/login';
 import { Forbidden } from './forbidden/forbidden';
+import { ListeCategories } from './liste-categories/liste-categories';
 import { adminGuard, authGuard } from './guards/guards';
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'updateVoiture/:id', component: UpdateVoiture, canActivate: [adminGuard] },
   { path: 'rechercheParCategorie', component: RechercheParCategorie },
   { path: 'rechercheParNom', component: RechercheParNom },
+  { path: 'listeCategories', component: ListeCategories, canActivate: [authGuard] },
   { path: 'login', component: Login },
   { path: 'forbidden', component: Forbidden },
   { path: '', redirectTo: 'voitures', pathMatch: 'full' },

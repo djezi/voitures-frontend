@@ -30,7 +30,7 @@ export class UpdateVoiture implements OnInit {
       this.router.navigate(['/voitures']);
       return;
     }
-    // work on a copy so nothing changes until "Modifier" is clicked
+
     this.currentVoiture = { ...found };
     if (this.currentVoiture.categorie) {
       this.updatedCatId = this.currentVoiture.categorie.idCat;

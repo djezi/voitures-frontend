@@ -32,7 +32,7 @@ export class AddVoiture implements OnInit {
     }
     this.newCategorie = this.voitureservice.consulterCategorie(this.newIdCat);
     this.newVoiture.categorie = this.newCategorie;
-    // the date input gives a "yyyy-MM-dd" string -> convert to Date
+
     this.newVoiture.dateCreation = new Date(this.newVoiture.dateCreation);
     this.voitureservice.ajoutVoiture(this.newVoiture);
     this.router.navigate(['/voitures']);

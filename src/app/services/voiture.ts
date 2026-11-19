@@ -10,7 +10,13 @@ export class Voitureservice {
   categorie!: Categorie[];
 
   constructor() {
-    this.categorie = [
+    let savedCats: Categorie[] = [];
+    try {
+      savedCats = JSON.parse(localStorage.getItem('categories') || '[]');
+    } catch {
+      savedCats = [];
+    }
+    this.categorie = Array.isArray(savedCats) && savedCats.length > 0 ? savedCats : [
       { idCat: 1, nomCat: "v8" },
       { idCat: 2, nomCat: "RS" }
     ];
@@ -22,7 +28,6 @@ export class Voitureservice {
       saved = [];
     }
 
-    // if nothing valid is saved, start with the default list
     this.voitures = Array.isArray(saved) && saved.length > 0 ? saved : [
       { idVoiture: 1, nomVoiture: "BMW", prixVoiture: 50000, dateCreation: new Date("2018-07-30"), categorie: { idCat: 1, nomCat: "v8" } },
       { idVoiture: 2, nomVoiture: "AUDI", prixVoiture: 60000, dateCreation: new Date("2019-05-12"), categorie: { idCat: 2, nomCat: "RS" } },
@@ -33,6 +38,10 @@ export class Voitureservice {
 
   private save() {
     localStorage.setItem('voitures', JSON.stringify(this.voitures));
+  }
+
+  private saveCategories() {
+    localStorage.setItem('categories', JSON.stringify(this.categorie));
   }
 
   listVoiture(): Voiture[] {
@@ -74,5 +83,27 @@ export class Voitureservice {
 
   rechercherParCategorie(idCat: number): Voiture[] {
     return this.voitures.filter(v => v.categorie && v.categorie.idCat == idCat);
+  }
+
+  ajouterCategorie(cat: Categorie) {
+    const maxId = this.categorie.reduce((m, c) => Math.max(m, c.idCat), 0);
+    this.categorie.push({ idCat: maxId + 1, nomCat: cat.nomCat });
+    this.saveCategories();
+  }
+
+
+  updateCategorie(cat: Categorie) {
+    const index = this.categorie.findIndex(c => c.idCat == cat.idCat);
+    if (index > -1) {
+      const updated = { idCat: this.categorie[index].idCat, nomCat: cat.nomCat };
+      this.categorie[index] = updated;
+      this.voitures.forEach(v => {
+        if (v.categorie && v.categorie.idCat == updated.idCat) {
+          v.categorie = updated;
+        }
+      });
+      this.save();
+      this.saveCategories();
+    }
   }
 }
