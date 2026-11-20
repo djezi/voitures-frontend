@@ -5,12 +5,6 @@
 
       <form>
         <div class="mb-3">
-          <label class="form-label">ID Voiture</label>
-          <input type="number" name="idVoiture" class="form-control"
-                 [(ngModel)]="newVoiture.idVoiture">
-        </div>
-
-        <div class="mb-3">
           <label class="form-label">Nom Voiture</label>
           <input type="text" name="nomVoiture" class="form-control"
                  [(ngModel)]="newVoiture.nomVoiture">
@@ -31,7 +25,7 @@
         <div class="mb-3">
           <label class="form-label">Catégorie</label>
           <select name="idCategorie" class="form-select" [(ngModel)]="newIdCat">
-            @for (cat of categories; track cat.idCat) {
+            @for (cat of categories(); track cat.idCat) {
               <option [ngValue]="cat.idCat">{{ cat.nomCat }}</option>
             }
           </select>

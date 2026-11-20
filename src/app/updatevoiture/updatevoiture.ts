@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,8 +12,8 @@ import { Categorie } from '../model/categorie.model';
   templateUrl: './updatevoiture.html'
 })
 export class UpdateVoiture implements OnInit {
-  currentVoiture = new Voiture();
-  categories!: Categorie[];
+  currentVoiture = signal<Voiture>(new Voiture());
+  categories = signal<Categorie[]>([]);
   updatedCatId!: number;
 
   constructor(
@@ -23,23 +23,29 @@ export class UpdateVoiture implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.categories = this.voitureService.listeCategorie();
-    const id = this.activatedRoute.snapshot.params['id'];
-    const found = this.voitureService.consulterVoiture(id);
-    if (!found) {
-      this.router.navigate(['/voitures']);
-      return;
-    }
+    this.voitureService.listeCategorie().subscribe(cats => this.categories.set(cats));
 
-    this.currentVoiture = { ...found };
-    if (this.currentVoiture.categorie) {
-      this.updatedCatId = this.currentVoiture.categorie.idCat;
-    }
+    const id = this.activatedRoute.snapshot.params['id'];
+    this.voitureService.consulterVoiture(id).subscribe({
+      next: (voiture) => {
+        if (voiture.categorie) {
+          this.updatedCatId = voiture.categorie.idCat;
+        }
+        this.currentVoiture.set(voiture);
+      },
+      error: () => this.router.navigate(['/voitures'])
+    });
   }
 
   onUpdateVoiture() {
-    this.currentVoiture.categorie = this.voitureService.consulterCategorie(this.updatedCatId);
-    this.voitureService.updateVoiture(this.currentVoiture);
-    this.router.navigate(['/voitures']);
+    const voiture = this.currentVoiture();
+    const cat = this.categories().find(c => c.idCat == this.updatedCatId);
+    if (cat) {
+      voiture.categorie = cat;
+    }
+    this.voitureService.updateVoiture(voiture).subscribe({
+      next: () => this.router.navigate(['/voitures']),
+      error: () => alert("La modification a échoué.")
+    });
   }
 }

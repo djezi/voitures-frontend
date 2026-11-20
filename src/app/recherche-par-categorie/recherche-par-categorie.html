@@ -7,43 +7,53 @@
         <label class="form-label">Model</label>
         <select class="form-control form-control-lg" id="idCategorie" name="idCategorie"
                 [(ngModel)]="idCategorie" (change)="onChange()">
-          <option *ngFor="let cat of categories" [value]="cat.idCat">
-            {{ cat.nomCat }}
-          </option>
+          @for (cat of categories(); track cat.idCat) {
+            <option [value]="cat.idCat">{{ cat.nomCat }}</option>
+          }
         </select>
       </div>
 
-      <table class="table table-striped" *ngIf="voitures && voitures.length > 0">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Nom</th>
-            <th>Prix</th>
-            <th>Date Création</th>
-            <th>Catégorie</th>
-            <th *ngIf="authService.isAdmin()">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let voiture of voitures">
-            <td>{{ voiture.idVoiture }}</td>
-            <td>{{ voiture.nomVoiture }}</td>
-            <td>{{ voiture.prixVoiture }}</td>
-            <td>{{ voiture.dateCreation | date:'dd/MM/yyyy' }}</td>
-            <td>{{ voiture.categorie?.nomCat }}</td>
-            <td *ngIf="authService.isAdmin()">
-              <button class="btn btn-primary btn-sm me-2"
-                      [routerLink]="['/updateVoiture', voiture.idVoiture]">Modifier</button>
-              <button (click)="supprimerVoiture(voiture)" type="button"
-                      class="btn btn-danger btn-sm">Supprimer</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div *ngIf="voitures && voitures.length === 0" class="alert alert-warning mt-3">
-        Aucune voiture trouvée pour cette catégorie !
-      </div>
+      @if (voitures(); as liste) {
+        @if (liste.length > 0) {
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Date Création</th>
+                <th>Catégorie</th>
+                @if (authService.isAdmin()) {
+                  <th>Actions</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (voiture of liste; track voiture.idVoiture) {
+                <tr>
+                  <td>{{ voiture.idVoiture }}</td>
+                  <td>{{ voiture.nomVoiture }}</td>
+                  <td>{{ voiture.prixVoiture }}</td>
+                  <td>{{ voiture.dateCreation | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ voiture.categorie?.nomCat }}</td>
+                  @if (authService.isAdmin()) {
+                    <td>
+                      <button class="btn btn-primary btn-sm me-2"
+                              [routerLink]="['/updateVoiture', voiture.idVoiture]">Modifier</button>
+                      <button (click)="supprimerVoiture(voiture)" type="button"
+                              class="btn btn-danger btn-sm">Supprimer</button>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="alert alert-warning mt-3">
+            Aucune voiture trouvée pour cette Model !
+          </div>
+        }
+      }
 
     </div>
   </div>

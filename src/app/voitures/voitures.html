@@ -2,10 +2,14 @@
   <div class="card shadow mb-4">
     <div class="card-body">
 
-      <h3 class="mb-3 text-primary">Nombre total : {{ voitures.length }}</h3>
+      @if (erreur()) {
+        <div class="alert alert-danger">{{ erreur() }}</div>
+      }
+
+      <h3 class="mb-3 text-primary">Nombre total : {{ voitures().length }}</h3>
 
       <table class="table table-striped">
-        @if (voitures.length > 0) {
+        @if (voitures().length > 0) {
           <thead>
             <tr>
               <th>N°</th>
@@ -13,7 +17,7 @@
               <th>Nom</th>
               <th>Prix</th>
               <th>Date Création</th>
-              <th>Catégorie</th>
+              <th>Model</th>
               @if (authService.isAdmin()) {
                 <th>Action</th>
               }
@@ -22,7 +26,7 @@
         }
 
         <tbody>
-          @for (voiture of voitures; track voiture.idVoiture; let index = $index) {
+          @for (voiture of voitures(); track voiture.idVoiture; let index = $index) {
             <tr>
               <td>{{ index + 1 }}</td>
               <td>{{ voiture.idVoiture }}</td>

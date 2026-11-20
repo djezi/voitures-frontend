@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -15,9 +15,10 @@ import { Auth } from '../services/auth';
 })
 export class RechercheParCategorie implements OnInit {
 
-  voitures!: Voiture[];
+  // null = no search done yet
+  voitures = signal<Voiture[] | null>(null);
+  categories = signal<Categorie[]>([]);
   idCategorie!: number;
-  categories!: Categorie[];
 
   constructor(
     private voitureService: Voitureservice,
@@ -25,18 +26,18 @@ export class RechercheParCategorie implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.categories = this.voitureService.listeCategorie();
+    this.voitureService.listeCategorie().subscribe(cats => this.categories.set(cats));
   }
 
   onChange() {
-    this.voitures = this.voitureService.rechercherParCategorie(this.idCategorie);
+    this.voitureService.rechercherParCategorie(this.idCategorie)
+      .subscribe(voitures => this.voitures.set(voitures));
   }
 
   supprimerVoiture(v: Voiture) {
     let conf = confirm("Etes-vous sûr de vouloir supprimer cette voiture ?");
     if (conf) {
-      this.voitureService.supprimerVoiture(v);
-      this.onChange();
+      this.voitureService.supprimerVoiture(v.idVoiture).subscribe(() => this.onChange());
     }
   }
 }

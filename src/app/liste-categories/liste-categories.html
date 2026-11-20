@@ -20,14 +20,14 @@
         <thead>
           <tr>
             <th>Id</th>
-            <th>Nom Catégorie</th>
+            <th>Nom Model</th>
             @if (authService.isAdmin()) {
               <th>Action</th>
             }
           </tr>
         </thead>
         <tbody>
-          @for (cat of categories; track cat.idCat) {
+          @for (cat of categories(); track cat.idCat) {
             <tr>
               <td>{{ cat.idCat }}</td>
               <td>{{ cat.nomCat }}</td>
@@ -37,7 +37,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="3" class="text-center py-3">Aucune catégorie.</td>
+              <td colspan="3" class="text-center py-3">Aucune Model.</td>
             </tr>
           }
         </tbody>

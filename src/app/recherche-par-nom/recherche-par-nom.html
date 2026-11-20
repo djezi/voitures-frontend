@@ -6,29 +6,31 @@
         <label class="form-label">Filtrer par nom :</label>
         <input type="text" [(ngModel)]="searchTerm" class="form-control" placeholder="Tapez le nom de la voiture...">
       </div>
-      <table class="table table-striped" *ngIf="voitures && voitures.length > 0">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Nom</th>
-            <th>Prix</th>
-            <th>Date Création</th>
-            <th>Catégorie</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (voiture of voitures | searchFilter: searchTerm; track voiture.idVoiture) {
-            <tr>
-              <td>{{ voiture.idVoiture }}</td>
-              <td>{{ voiture.nomVoiture }}</td>
-              <td>{{ voiture.prixVoiture }}</td>
-              <td>{{ voiture.dateCreation | date:'dd/MM/yyyy' }}</td>
-              <td>{{ voiture.categorie?.nomCat }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
 
+      @if (voitures().length > 0) {
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Nom</th>
+              <th>Prix</th>
+              <th>Date Création</th>
+              <th>Catégorie</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (voiture of voitures() | searchFilter: searchTerm; track voiture.idVoiture) {
+              <tr>
+                <td>{{ voiture.idVoiture }}</td>
+                <td>{{ voiture.nomVoiture }}</td>
+                <td>{{ voiture.prixVoiture }}</td>
+                <td>{{ voiture.dateCreation | date:'dd/MM/yyyy' }}</td>
+                <td>{{ voiture.categorie?.nomCat }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
     </div>
   </div>
 </div>

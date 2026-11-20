@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Voiture } from '../model/voiture.model';
@@ -12,12 +12,13 @@ import { SearchFilterPipe } from '../search-filter-pipe';
   styles: ``,
   templateUrl: './recherche-par-nom.html',
 })
-export class RechercheParNom implements OnInit{
-  voitures!: Voiture[];
+export class RechercheParNom implements OnInit {
+  voitures = signal<Voiture[]>([]);
   searchTerm: string = '';
-  constructor(private voitureService: Voitureservice) {}
-  ngOnInit(): void {
-    this.voitures = this.voitureService.listVoiture();
-  }
 
+  constructor(private voitureService: Voitureservice) {}
+
+  ngOnInit(): void {
+    this.voitureService.listVoiture().subscribe(voitures => this.voitures.set(voitures));
+  }
 }

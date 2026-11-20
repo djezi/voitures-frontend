@@ -7,32 +7,32 @@
         <div class="mb-3">
           <label class="form-label">ID Voiture</label>
           <input type="number" name="idVoiture" class="form-control" readonly
-                 [(ngModel)]="currentVoiture.idVoiture">
+                 [(ngModel)]="currentVoiture().idVoiture">
         </div>
 
         <div class="mb-3">
           <label class="form-label">Nom Voiture</label>
           <input type="text" name="nomVoiture" class="form-control"
-                 [(ngModel)]="currentVoiture.nomVoiture">
+                 [(ngModel)]="currentVoiture().nomVoiture">
         </div>
 
         <div class="mb-3">
           <label class="form-label">Prix Voiture</label>
           <input type="number" name="prixVoiture" class="form-control"
-                 [(ngModel)]="currentVoiture.prixVoiture">
+                 [(ngModel)]="currentVoiture().prixVoiture">
         </div>
 
         <div class="mb-3">
           <label class="form-label">Date Création</label>
           <input type="date" name="dateCreation" class="form-control"
-                 [ngModel]="currentVoiture.dateCreation | date:'yyyy-MM-dd'"
-                 (ngModelChange)="currentVoiture.dateCreation = $event">
+                 [ngModel]="currentVoiture().dateCreation | date:'yyyy-MM-dd'"
+                 (ngModelChange)="currentVoiture().dateCreation = $event">
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Catégorie</label>
+          <label class="form-label">Model</label>
           <select name="idCategorie" class="form-select" [(ngModel)]="updatedCatId">
-            @for (cat of categories; track cat.idCat) {
+            @for (cat of categories(); track cat.idCat) {
               <option [ngValue]="cat.idCat">{{ cat.nomCat }}</option>
             }
           </select>

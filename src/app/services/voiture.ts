@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Voiture } from '../model/voiture.model';
 import { Categorie } from '../model/categorie.model';
 
@@ -6,104 +8,52 @@ import { Categorie } from '../model/categorie.model';
   providedIn: 'root'
 })
 export class Voitureservice {
-  voitures: Voiture[];
-  categorie!: Categorie[];
+  private apiVoitures = 'http://localhost:8080/api/voitures';
+  private apiCategories = 'http://localhost:8080/api/categories';
 
-  constructor() {
-    let savedCats: Categorie[] = [];
-    try {
-      savedCats = JSON.parse(localStorage.getItem('categories') || '[]');
-    } catch {
-      savedCats = [];
-    }
-    this.categorie = Array.isArray(savedCats) && savedCats.length > 0 ? savedCats : [
-      { idCat: 1, nomCat: "v8" },
-      { idCat: 2, nomCat: "RS" }
-    ];
+  constructor(private http: HttpClient) {}
 
-    let saved: Voiture[] = [];
-    try {
-      saved = JSON.parse(localStorage.getItem('voitures') || '[]');
-    } catch {
-      saved = [];
-    }
-
-    this.voitures = Array.isArray(saved) && saved.length > 0 ? saved : [
-      { idVoiture: 1, nomVoiture: "BMW", prixVoiture: 50000, dateCreation: new Date("2018-07-30"), categorie: { idCat: 1, nomCat: "v8" } },
-      { idVoiture: 2, nomVoiture: "AUDI", prixVoiture: 60000, dateCreation: new Date("2019-05-12"), categorie: { idCat: 2, nomCat: "RS" } },
-      { idVoiture: 3, nomVoiture: "MERCEDES", prixVoiture: 75000, dateCreation: new Date("2020-01-15"), categorie: { idCat: 1, nomCat: "v8" } },
-      { idVoiture: 4, nomVoiture: "RENAULT", prixVoiture: 25000, dateCreation: new Date("2021-10-05"), categorie: { idCat: 2, nomCat: "RS" } }
-    ];
+  listVoiture(): Observable<Voiture[]> {
+    return this.http.get<Voiture[]>(this.apiVoitures);
   }
 
-  private save() {
-    localStorage.setItem('voitures', JSON.stringify(this.voitures));
+  consulterVoiture(id: number): Observable<Voiture> {
+    return this.http.get<Voiture>(`${this.apiVoitures}/${id}`);
   }
 
-  private saveCategories() {
-    localStorage.setItem('categories', JSON.stringify(this.categorie));
+  ajoutVoiture(voiture: Voiture): Observable<Voiture> {
+    return this.http.post<Voiture>(this.apiVoitures, voiture);
   }
 
-  listVoiture(): Voiture[] {
-    return this.voitures;
+  updateVoiture(voiture: Voiture): Observable<Voiture> {
+    return this.http.put<Voiture>(`${this.apiVoitures}/${voiture.idVoiture}`, voiture);
   }
 
-  ajoutVoiture(voi: Voiture) {
-    this.voitures.push(voi);
-    this.save();
+  supprimerVoiture(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiVoitures}/${id}`);
   }
 
-  supprimerVoiture(v: Voiture) {
-    const index = this.voitures.indexOf(v);
-    if (index > -1) {
-      this.voitures.splice(index, 1);
-      this.save();
-    }
+  rechercherParCategorie(idCat: number): Observable<Voiture[]> {
+    return this.http.get<Voiture[]>(`${this.apiVoitures}/cat/${idCat}`);
   }
 
-  consulterVoiture(id: number): Voiture {
-    return this.voitures.find(v => v.idVoiture == id)!;
+  rechercherParNom(nom: string): Observable<Voiture[]> {
+    return this.http.get<Voiture[]>(`${this.apiVoitures}/search`, { params: { nom } });
   }
 
-  updateVoiture(voiture: Voiture) {
-    const index = this.voitures.findIndex(v => v.idVoiture == voiture.idVoiture);
-    if (index > -1) {
-      this.voitures[index] = voiture;
-      this.save();
-    }
+  listeCategorie(): Observable<Categorie[]> {
+    return this.http.get<Categorie[]>(this.apiCategories);
   }
 
-  listeCategorie(): Categorie[] {
-    return this.categorie;
+  consulterCategorie(id: number): Observable<Categorie> {
+    return this.http.get<Categorie>(`${this.apiCategories}/${id}`);
   }
 
-  consulterCategorie(id: number): Categorie {
-    return this.categorie.find(cat => cat.idCat == id)!;
+  ajouterCategorie(cat: Categorie): Observable<Categorie> {
+    return this.http.post<Categorie>(this.apiCategories, cat);
   }
 
-  rechercherParCategorie(idCat: number): Voiture[] {
-    return this.voitures.filter(v => v.categorie && v.categorie.idCat == idCat);
-  }
-
-  ajouterCategorie(cat: Categorie) {
-    const maxId = this.categorie.reduce((m, c) => Math.max(m, c.idCat), 0);
-    this.categorie.push({ idCat: maxId + 1, nomCat: cat.nomCat });
-    this.saveCategories();
-  }
-
-
-  updateCategorie(cat: Categorie) {
-    const index = this.categorie.findIndex(c => c.idCat == cat.idCat);
-    if (index > -1) {
-      const updated = { idCat: this.categorie[index].idCat, nomCat: cat.nomCat };
-      this.categorie[index] = updated;
-      this.voitures.forEach(v => {
-        if (v.categorie && v.categorie.idCat == updated.idCat) {
-          v.categorie = updated;
-        }
-      });
-      this.save();
-      this.saveCategories();
-    }
+  updateCategorie(cat: Categorie): Observable<Categorie> {
+    return this.http.put<Categorie>(`${this.apiCategories}/${cat.idCat}`, cat);
   }
 }
